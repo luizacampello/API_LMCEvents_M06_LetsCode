@@ -11,8 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Mappers\" />
+    <ProjectReference Include="..\LMCEvents.Core\LMCEvents.Core.csproj" />
+    <ProjectReference Include="..\LMCEvents.Infra.Data\LMCEvents.Infra.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Filters\" />
   </ItemGroup>
 
 </Project>

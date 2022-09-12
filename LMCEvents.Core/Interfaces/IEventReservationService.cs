@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LMCEvents.DTOs;
 
 namespace LMCEvents.Core.Interfaces
 {
-    internal interface IEventReservationService
+    public interface IEventReservationService
     {
+        List<BookingResponseDTO> GetBookings();
+
+        BookingResponseDTO GetBookingByPersonNameAndEventTitle(string personName, string eventTitle);
+
+        bool InsertBooking(BookingResponseDTO booking);
+
+        bool UpdateBooking(BookingResponseDTO booking);
+
+        bool DeleteBooking(BookingResponseDTO booking);
     }
 }
