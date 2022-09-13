@@ -28,9 +28,16 @@ namespace LMCEvents.Mappers
             return response;
         }
 
-        public EventReservation MapResponseDTOToEventReservation(BookingResponseDTO bookingResponseDTO)
+        public EventReservation MapResponseDTOToEventReservation(BookingResponseDTO bookingResponseDTO, long idEvent)
         {
-            throw new NotImplementedException();
+            EventReservation eventReservation = new()
+            {
+                PersonName = bookingResponseDTO.PersonName,
+                Quantity = bookingResponseDTO.Quantity,
+                IdEvent = idEvent
+            };
+
+            return eventReservation;
         }
     }
 }

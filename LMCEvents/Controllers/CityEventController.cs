@@ -1,6 +1,7 @@
 ﻿using LMCEvents.Core.Interfaces;
 using LMCEvents.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace LMCEvents.Controllers
 {
@@ -27,9 +28,39 @@ namespace LMCEvents.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<EventResponseDTO>> GetEventByTitle(string title)
         {
-            EventResponseDTO eventResponse = _cityEventService.GetEventByTitle(title);
+            List <EventResponseDTO> eventResponse = _cityEventService.GetEventByTitle(title);
 
-            if (eventResponse is null)
+            if (eventResponse.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(eventResponse);
+        }
+
+        [HttpGet("/eventByLocalAndDate/{local}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<List<EventResponseDTO>> GetEventByLocalAndDate(string local, DateTime date)
+        {
+            List<EventResponseDTO> eventResponse = _cityEventService.GetEventByLocalAndDate(local, date);
+
+            if (eventResponse.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(eventResponse);
+        }
+
+        [HttpGet("/eventByPriceAndDate/{priceMin}/{priceMax}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<List<EventResponseDTO>> GetEventByPriceAndDate(decimal priceMin, decimal priceMax, DateTime date)
+        {
+            List<EventResponseDTO> eventResponse = _cityEventService.GetEventByPriceAndDate(priceMin, priceMax, date);
+
+            if (eventResponse.Count == 0)
             {
                 return NotFound();
             }

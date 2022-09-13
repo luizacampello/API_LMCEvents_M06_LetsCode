@@ -9,6 +9,6 @@ namespace LMCEvents.Core.Interfaces
 
         BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation, CityEvent bookedEvent);
 
-        EventReservation MapResponseDTOToEventReservation(BookingResponseDTO bookingResponseDTO);
+        EventReservation MapResponseDTOToEventReservation(BookingResponseDTO bookingResponseDTO, long idEvent);
     }
 }

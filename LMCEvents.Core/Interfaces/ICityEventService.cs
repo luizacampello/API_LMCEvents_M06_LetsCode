@@ -7,11 +7,11 @@ namespace LMCEvents.Core.Interfaces
     {
         List<EventResponseDTO> GetCityEvents();
 
-        EventResponseDTO GetEventByTitle(string title);
+        List<EventResponseDTO> GetEventByTitle(string title);
 
-        EventResponseDTO GetEventByLocalAndDate(string title);
+        List<EventResponseDTO> GetEventByLocalAndDate(string local, DateTime date);
 
-        EventResponseDTO GetEventByPriceAndDate(string title);
+        List<EventResponseDTO> GetEventByPriceAndDate(decimal priceMin, decimal priceMax, DateTime date);
 
         bool InsertEvent(EventResponseDTO eventResponseDTO);
 

@@ -24,19 +24,19 @@ namespace LMCEvents.Core.Service
             return _eventDTOMapper.MapCityEventsList(_cityEventRepository.GetCityEvents());
         }
 
-        public EventResponseDTO GetEventByLocalAndDate(string title)
+        public List<EventResponseDTO> GetEventByLocalAndDate(string local, DateTime date)
         {
-            throw new NotImplementedException();
+            return _eventDTOMapper.MapCityEventsList(_cityEventRepository.GetEventByLocalAndDate(local, date));
         }
 
-        public EventResponseDTO GetEventByPriceAndDate(string title)
+        public List<EventResponseDTO> GetEventByPriceAndDate(decimal priceMin, decimal priceMax, DateTime date)
         {
-            throw new NotImplementedException();
+            return _eventDTOMapper.MapCityEventsList(_cityEventRepository.GetEventByPriceAndDate(priceMin, priceMax, date));
         }
 
-        public EventResponseDTO GetEventByTitle(string title)
+        public List<EventResponseDTO> GetEventByTitle(string title)
         {
-            return _eventDTOMapper.MapCityEventToResponseDTO(_cityEventRepository.GetEventByTitle(title));
+            return _eventDTOMapper.MapCityEventsList(_cityEventRepository.GetEventByTitle(title));
         }
 
         public bool InsertEvent(EventResponseDTO newEvent)

@@ -8,7 +8,7 @@ namespace LMCEvents.Core.Interfaces
 
         BookingResponseDTO GetBookingByPersonNameAndEventTitle(string personName, string eventTitle);
 
-        bool InsertBooking(BookingResponseDTO booking);
+        bool InsertBooking(long idEvent, string PersonName, long Quantity);
 
         bool UpdateBooking(BookingResponseDTO booking);
 

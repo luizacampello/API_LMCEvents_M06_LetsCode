@@ -7,15 +7,17 @@ namespace LMCEvents.Core.Interfaces
     {
         List<CityEvent> GetCityEvents();
 
-        CityEvent GetEventByTitle(string title);
+        List<CityEvent> GetEventByTitle(string title);
 
-        CityEvent GetEventByLocalAndDate(string title);
+        CityEvent GetEventByTitleAndLocal(string title, string local);
 
-        CityEvent GetEventByPriceAndDate(string title);
+        List<CityEvent> GetEventByLocalAndDate(string local, DateTime date);
+
+        List<CityEvent> GetEventByPriceAndDate(decimal priceMin, decimal priceMax, DateTime date);
 
         bool InsertEvent(CityEvent cityEvent);
 
-        bool UpdateEvent(CityEvent cityEvent);
+        bool UpdateEvent(long id, CityEvent cityEvent);
 
         bool DeleteEvent(CityEvent cityEvent);
 

@@ -31,7 +31,13 @@ namespace LMCEvents.Infra.Data.Repositories
 
         public bool InsertBooking(EventReservation booking)
         {
-            throw new NotImplementedException();
+            var query = "INSERT INTO EventReservation VALUES (@IdEvent, @PersonName, @Quantity)";
+
+            var parameters = new DynamicParameters(booking);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.Execute(query, parameters) == 1;
         }
 
         public bool UpdateBooking(EventReservation booking)
