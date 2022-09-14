@@ -1,11 +1,12 @@
-﻿using LMCEvents.Core.Model;
-using LMCEvents.DTOs;
+﻿using LMCEvents.DTOs;
 
 namespace LMCEvents.Core.Interfaces
 {
     public interface ICityEventService
     {
         List<EventResponseDTO> GetCityEvents();
+
+        EventResponseDTO GetEventById(long idEvent);
 
         List<EventResponseDTO> GetEventByTitle(string title);
 
@@ -15,7 +16,7 @@ namespace LMCEvents.Core.Interfaces
 
         bool InsertEvent(EventResponseDTO eventResponseDTO);
 
-        bool UpdateEvent(EventResponseDTO eventResponseDTO);
+        bool UpdateEvent(long idEvent, EventResponseDTO eventResponseDTO);
 
         bool DeleteEvent(EventResponseDTO eventResponseDTO);
 

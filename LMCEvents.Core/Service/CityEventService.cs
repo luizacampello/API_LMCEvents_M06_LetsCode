@@ -1,4 +1,5 @@
 ﻿using LMCEvents.Core.Interfaces;
+using LMCEvents.Core.Model;
 using LMCEvents.DTOs;
 
 namespace LMCEvents.Core.Service
@@ -24,6 +25,11 @@ namespace LMCEvents.Core.Service
             return _eventDTOMapper.MapCityEventsList(_cityEventRepository.GetCityEvents());
         }
 
+        public EventResponseDTO GetEventById(long idEvent)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<EventResponseDTO> GetEventByLocalAndDate(string local, DateTime date)
         {
             return _eventDTOMapper.MapCityEventsList(_cityEventRepository.GetEventByLocalAndDate(local, date));
@@ -44,9 +50,11 @@ namespace LMCEvents.Core.Service
             return _cityEventRepository.InsertEvent(_eventDTOMapper.MapResponseDTOToCityEvent(newEvent));
         }
 
-        public bool UpdateEvent(EventResponseDTO eventResponseDTO)
+        public bool UpdateEvent(long idEvent, EventResponseDTO eventResponseDTO)
         {
-            throw new NotImplementedException();
+            CityEvent eventToUpdate = _eventDTOMapper.MapResponseDTOToCityEvent(eventResponseDTO);
+            eventToUpdate.IdEvent = idEvent;
+            return _cityEventRepository.UpdateEvent(eventToUpdate);
         }
     }
 }

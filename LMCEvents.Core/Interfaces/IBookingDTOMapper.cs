@@ -7,8 +7,8 @@ namespace LMCEvents.Core.Interfaces
     {
         List<BookingResponseDTO> MapBookingsList(List<EventReservation> eventReservations);
 
-        BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation, CityEvent bookedEvent);
+        BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation);
 
-        EventReservation MapResponseDTOToEventReservation(BookingResponseDTO bookingResponseDTO, long idEvent);
+        EventReservation MapResponseDTOToEventReservation(BookingResponseDTO booking);
     }
 }

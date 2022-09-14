@@ -20,6 +20,11 @@ namespace LMCEvents.Mappers
 
         public EventResponseDTO MapCityEventToResponseDTO(CityEvent cityEvent)
         {
+            if (cityEvent is null)
+            {
+                return null;
+            }
+
             EventResponseDTO eventResponseDTO = new()
             {
                 Title = cityEvent.Title,

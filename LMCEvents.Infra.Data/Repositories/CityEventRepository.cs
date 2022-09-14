@@ -29,7 +29,7 @@ namespace LMCEvents.Infra.Data.Repositories
         {
             string queryNoDate = "SELECT * FROM CityEvent WHERE local = @local AND status = 1";
 
-            string queryWithDate = "SELECT * FROM CityEvent WHERE local = @local AND dateHourEvent = @date AND status = 1";
+            string queryWithDate = "SELECT * FROM CityEvent WHERE local = @local AND CAST(dateHourEvent AS DATE) = CAST(@date AS DATE) AND status = 1";
 
             string query;
 
@@ -55,7 +55,7 @@ namespace LMCEvents.Infra.Data.Repositories
         {          
             string queryNoDate = "SELECT * FROM CityEvent WHERE price BETWEEN @priceMin AND @priceMax AND status = 1";
 
-            string queryWithDate = "SELECT * FROM CityEvent WHERE price BETWEEN @priceMin AND @priceMax AND dateHourEvent = @date AND status = 1";
+            string queryWithDate = "SELECT * FROM CityEvent WHERE price BETWEEN @priceMin AND @priceMax AND CAST(dateHourEvent AS DATE) = CAST(@date AS DATE) AND status = 1";
 
             string query;
 
@@ -90,42 +90,40 @@ namespace LMCEvents.Infra.Data.Repositories
             return conn.Query<CityEvent>(query, parameters).ToList();
         }
 
-        public CityEvent GetEventByTitleAndLocal(string title, string local)
-        {
-            string query = "SELECT * FROM CityEvent WHERE title = @title AND local = @local)";
-
-            var parameters = new DynamicParameters();
-            parameters.Add("title", title);
-            parameters.Add("local", local);
-
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-
-            return conn.QueryFirstOrDefault<CityEvent>(query, parameters);
-        }
-
         public bool InsertEvent(CityEvent newEvent)
         {
-            var query = "INSERT INTO CityEvent VALUES (@title, @description, @dateHourEvent, @local, @adress, @price)";
+            var query = "INSERT INTO CityEvent VALUES (@title, @description, @dateHourEvent, @local, @address, @price, 1)";
 
-            var parameters = new DynamicParameters();
-            parameters.Add("title", newEvent.Title);
-            parameters.Add("description", newEvent.Description);
-            parameters.Add("dateHourEvent", newEvent.DateHourEvent);
-            parameters.Add("local", newEvent.Local);
-            parameters.Add("adress", newEvent.Address);
-            parameters.Add("price", newEvent.Price);
+            var parameters = new DynamicParameters(new
+            {
+                newEvent.Title,
+                newEvent.Description,
+                newEvent.DateHourEvent,
+                newEvent.Local,
+                newEvent.Address,
+                newEvent.Price
+            });
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
             return conn.Execute(query, parameters) == 1;
         }
 
-        public bool UpdateEvent(long id, CityEvent cityEvent)
+        public bool UpdateEvent(CityEvent eventToUpdate)
         {
-            string query = "UPDATE CityEvent SET title = @title, description = @description, dateHourEvent = @dateHourEvent, local = @local, adress = @adress, price = @price WHERE idEvent = @idEvent;";
+            string query = "UPDATE CityEvent SET title = @title, description = @description, dateHourEvent = @dateHourEvent, local = @local, address = @address, price = @price WHERE idEvent = @idEvent;";
+            
+            var parameters = new DynamicParameters(new 
+            { 
+                eventToUpdate.Title,
+                eventToUpdate.Description,
+                eventToUpdate.DateHourEvent,
+                eventToUpdate.Local,
+                eventToUpdate.Address,
+                eventToUpdate.Price,
+                eventToUpdate.IdEvent
 
-            cityEvent.IdEvent = id;           ;
-            var parameters = new DynamicParameters(cityEvent);
+            });
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
@@ -137,5 +135,16 @@ namespace LMCEvents.Infra.Data.Repositories
             throw new NotImplementedException();
         }
 
+        public CityEvent GetEventById(long idEvent)
+        {
+            string query = "SELECT * FROM CityEvent WHERE idEvent = @idEvent";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("idEvent", idEvent);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.QueryFirstOrDefault<CityEvent>(query, parameters);
+        }
     }
 }

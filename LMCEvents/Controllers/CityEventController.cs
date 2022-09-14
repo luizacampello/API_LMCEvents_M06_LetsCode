@@ -81,6 +81,20 @@ namespace LMCEvents.Controllers
             return CreatedAtAction(nameof(PostNewEvent), eventResponse);
         }
 
+        [HttpPut("/updateEvent/{idEvent}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<EventResponseDTO> PutEvent(EventResponseDTO eventResponse, long idEvent)
+        {
+            if (!_cityEventService.UpdateEvent(idEvent, eventResponse))
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
+        }
+
+
 
     }
 }

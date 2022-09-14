@@ -2,7 +2,9 @@
 using LMCEvents.Core.Model;
 using LMCEvents.Core.Service;
 using LMCEvents.DTOs;
+using LMCEvents.Filters;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace LMCEvents.Controllers
 {
@@ -25,19 +27,53 @@ namespace LMCEvents.Controllers
             return Ok(_eventReservationService.GetBookings());
         }
 
-        [HttpPost("/newBooking/{IdEvent}/{PersonName}/{Quantity}")]
+        [HttpGet("/bookingByPersonNameAndEventTitle/{eventTitle}/{personName}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<List<BookingResponseDTO>> GetBookingByPersonNameAndEventTitle(string eventTitle, string personName)
+        {
+            return Ok(_eventReservationService.GetBookingByPersonNameAndEventTitle(personName, eventTitle));
+        }
+
+        [HttpPost("/newBooking")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<EventResponseDTO> PostNewBooking(long idEvent, string personName, long quantity)
+        public ActionResult<EventResponseDTO> PostNewBooking(BookingResponseDTO booking)
         {
-            if (!_eventReservationService.InsertBooking(idEvent, personName, quantity))
+            if (!_eventReservationService.InsertBooking(booking))
             {
                 return BadRequest();
             }
-            
-            BookingResponseDTO bookingResponseDTO = new EventResponseDTO();
 
-            return CreatedAtAction(nameof(PostNewEvent), eventResponse);
+            return CreatedAtAction(nameof(PostNewBooking), booking);
+        }
+
+        [HttpPut("/updateBooking/{idBooking}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(ValidateBookingIdActionFilter))]
+        public IActionResult UpdateBooking(long idBooking, BookingResponseDTO booking)
+        {
+            if (!_eventReservationService.UpdateBooking(idBooking, booking))
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("/deleteBooking/{idBooking}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ServiceFilter(typeof(ValidateBookingIdActionFilter))]
+        public IActionResult DeleteBooking(long idBooking)
+        {
+            if (!_eventReservationService.DeleteBooking(idBooking))
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+            return NoContent();
         }
 
     }

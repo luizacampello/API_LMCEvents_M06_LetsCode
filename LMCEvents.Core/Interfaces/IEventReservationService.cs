@@ -1,4 +1,5 @@
-﻿using LMCEvents.DTOs;
+﻿using LMCEvents.Core.Model;
+using LMCEvents.DTOs;
 
 namespace LMCEvents.Core.Interfaces
 {
@@ -6,12 +7,14 @@ namespace LMCEvents.Core.Interfaces
     {
         List<BookingResponseDTO> GetBookings();
 
-        BookingResponseDTO GetBookingByPersonNameAndEventTitle(string personName, string eventTitle);
+        BookingResponseDTO GetBookingById(long idBooking);
 
-        bool InsertBooking(long idEvent, string PersonName, long Quantity);
+        List<BookingResponseDTO> GetBookingByPersonNameAndEventTitle(string personName, string eventTitle);
 
-        bool UpdateBooking(BookingResponseDTO booking);
+        bool InsertBooking(BookingResponseDTO booking);
 
-        bool DeleteBooking(BookingResponseDTO booking);
+        bool UpdateBooking(long idEvent, BookingResponseDTO booking);
+
+        bool DeleteBooking(long idEvent);
     }
 }

@@ -15,9 +15,19 @@ namespace LMCEvents.Infra.Data.Repositories
             _configuration = configuration;
         }
 
-        public EventReservation GetBookingByPersonNameAndEventTitle(string personName, string eventTitle)
+        public List<EventReservation> GetBookingByPersonNameAndEventTitle(string personName, string title)
         {
-            throw new NotImplementedException();
+            string query = @"SELECT er.IdReservation, er.IdEvent, er.PersonName, er.Quantity FROM EventReservation AS er 
+                            INNER JOIN CityEvent AS ce ON ce.IdEvent = er.IdEvent 
+                            WHERE personName = @personName AND title LIKE CONCAT('%',@title,'%')";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("personName", personName);
+            parameters.Add("title", title);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.Query<EventReservation>(query, parameters).ToList();
         }
 
         public List<EventReservation> GetBookings()
@@ -40,20 +50,41 @@ namespace LMCEvents.Infra.Data.Repositories
             return conn.Execute(query, parameters) == 1;
         }
 
-        public bool UpdateBooking(EventReservation booking)
+        public bool UpdateBooking(long idReservation, EventReservation booking)
         {
-            string query = "UPDATE EventReservation SET Quantity = @quantity WHERE PersonName = @PersonName and idEvent = @idEvent;";
+            string query = "UPDATE EventReservation SET Quantity = @quantity WHERE idReservation = @idReservation;";
 ;
-            var parameters = new DynamicParameters(booking);
+            var parameters = new DynamicParameters();
+            parameters.Add("idReservation", idReservation);
+            parameters.Add("Quantity", booking.Quantity);
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
             return conn.Execute(query, parameters) == 1;
         }
 
-        public bool DeleteBooking(EventReservation booking)
+        public bool DeleteBooking(long idReservation)
         {
-            throw new NotImplementedException();
+            string query = "DELETE FROM EventReservation WHERE idReservation = @idReservation;";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("idReservation", idReservation);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.Execute(query, parameters) == 1;
+        }
+
+        public EventReservation GetBookingById(long idBooking)
+        {
+            string query = "SELECT * FROM EventReservation WHERE idReservation = @id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("id", idBooking);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.QueryFirstOrDefault<EventReservation>(query, parameters);
         }
     }
 }

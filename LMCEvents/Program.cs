@@ -1,5 +1,6 @@
 using LMCEvents.Core.Interfaces;
 using LMCEvents.Core.Service;
+using LMCEvents.Filters;
 using LMCEvents.Infra.Data.Repositories;
 using LMCEvents.Mappers;
 
@@ -12,12 +13,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ICityEventService, CityEventService> ();
+builder.Services.AddScoped<ICityEventService, CityEventService>();
 builder.Services.AddScoped<ICityEventRepository, CityEventRepository>();
 builder.Services.AddScoped<IEventDTOMapper, EventDTOMapper>();
 builder.Services.AddScoped<IBookingDTOMapper, BookingDTOMapper>();
 builder.Services.AddScoped<IEventReservationService, EventReservationService>();
 builder.Services.AddScoped<IEventReservationRepository, EventReservationRepository>();
+
+builder.Services.AddScoped<ValidateBookingIdActionFilter>();
+
+//builder.Services.AddMvc(options =>
+//{
+//    options.Filters.Add<ExceptionsFilters>();
+//}
+//);
 
 var app = builder.Build();
 

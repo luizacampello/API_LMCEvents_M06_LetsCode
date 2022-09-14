@@ -1,10 +1,4 @@
 ﻿using LMCEvents.Core.Model;
-using LMCEvents.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LMCEvents.Core.Interfaces
 {
@@ -12,13 +6,15 @@ namespace LMCEvents.Core.Interfaces
     {
         List<EventReservation> GetBookings();
 
-        EventReservation GetBookingByPersonNameAndEventTitle(string personName, string eventTitle);
+        EventReservation GetBookingById(long idBooking);
+
+        List<EventReservation> GetBookingByPersonNameAndEventTitle(string personName, string eventTitle);
 
         bool InsertBooking(EventReservation booking);
 
-        bool UpdateBooking(EventReservation booking);
+        bool UpdateBooking(long idBooking, EventReservation booking);
 
-        bool DeleteBooking(EventReservation booking);
+        bool DeleteBooking(long idBooking);
 
     }
 }

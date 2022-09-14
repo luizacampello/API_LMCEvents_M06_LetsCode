@@ -8,33 +8,40 @@ namespace LMCEvents.Mappers
     {
         public List<BookingResponseDTO> MapBookingsList(List<EventReservation> eventReservations)
         {
-            throw new NotImplementedException();
+            List<BookingResponseDTO> map = new();
+
+            foreach (EventReservation eventReservation in eventReservations)
+            {
+                map.Add(MapEventReservationToResponseDTO(eventReservation));
+            }
+
+            return map;
         }
 
-        public BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation, CityEvent bookedEvent)
+        public BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation)
         {
+            if (eventReservation is null)
+            {
+                return null;
+            }
+
             BookingResponseDTO response = new()
             {
                 PersonName = eventReservation.PersonName,
                 Quantity = eventReservation.Quantity,
-                EventTitle = bookedEvent.Title,
-                EventDescription = bookedEvent.Description,
-                EventDate = bookedEvent.DateHourEvent,
-                EventLocal = bookedEvent.Local,
-                EventAddress = bookedEvent.Address,
-                BookingPrice = (bookedEvent.Price * eventReservation.Quantity)
+                IdEvent = eventReservation.IdEvent,
             };
 
             return response;
         }
 
-        public EventReservation MapResponseDTOToEventReservation(BookingResponseDTO bookingResponseDTO, long idEvent)
+        public EventReservation MapResponseDTOToEventReservation(BookingResponseDTO bookingResponseDTO)
         {
             EventReservation eventReservation = new()
             {
                 PersonName = bookingResponseDTO.PersonName,
                 Quantity = bookingResponseDTO.Quantity,
-                IdEvent = idEvent
+                IdEvent = bookingResponseDTO.IdEvent
             };
 
             return eventReservation;
