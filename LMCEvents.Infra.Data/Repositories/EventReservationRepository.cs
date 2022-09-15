@@ -15,7 +15,16 @@ namespace LMCEvents.Infra.Data.Repositories
             _configuration = configuration;
         }
 
-        public List<EventReservation> GetBookingByPersonNameAndEventTitle(string personName, string title)
+        public List<EventReservation> GetBookings()
+        {
+            string query = "SELECT * FROM EventReservation";
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.Query<EventReservation>(query).ToList();
+        }
+
+        public List<EventReservation> GetBookingsByPersonNameAndEventTitle(string personName, string title)
         {
             string query = @"SELECT er.IdReservation, er.IdEvent, er.PersonName, er.Quantity FROM EventReservation AS er 
                             INNER JOIN CityEvent AS ce ON ce.IdEvent = er.IdEvent 
@@ -28,15 +37,30 @@ namespace LMCEvents.Infra.Data.Repositories
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
             return conn.Query<EventReservation>(query, parameters).ToList();
-        }
+        }               
 
-        public List<EventReservation> GetBookings()
+        public EventReservation GetBookingById(long idBooking)
         {
-            string query = "SELECT * FROM EventReservation";
+            string query = "SELECT * FROM EventReservation WHERE idReservation = @id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("id", idBooking);
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<EventReservation>(query).ToList();
+            return conn.QueryFirstOrDefault<EventReservation>(query, parameters);
+        }
+
+        public EventReservation GetBookingByIdEvent(long idEvent)
+        {
+            string query = "SELECT * FROM EventReservation WHERE idEvent = @idEvent";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("idEvent", idEvent);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.QueryFirstOrDefault<EventReservation>(query, parameters);
         }
 
         public bool InsertBooking(EventReservation booking)
@@ -50,13 +74,13 @@ namespace LMCEvents.Infra.Data.Repositories
             return conn.Execute(query, parameters) == 1;
         }
 
-        public bool UpdateBooking(long idReservation, EventReservation booking)
+        public bool UpdateBooking(long idReservation, int newQuantity)
         {
             string query = "UPDATE EventReservation SET Quantity = @quantity WHERE idReservation = @idReservation;";
 ;
             var parameters = new DynamicParameters();
             parameters.Add("idReservation", idReservation);
-            parameters.Add("Quantity", booking.Quantity);
+            parameters.Add("Quantity", newQuantity);
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
@@ -74,17 +98,6 @@ namespace LMCEvents.Infra.Data.Repositories
 
             return conn.Execute(query, parameters) == 1;
         }
-
-        public EventReservation GetBookingById(long idBooking)
-        {
-            string query = "SELECT * FROM EventReservation WHERE idReservation = @id";
-
-            var parameters = new DynamicParameters();
-            parameters.Add("id", idBooking);
-
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-
-            return conn.QueryFirstOrDefault<EventReservation>(query, parameters);
-        }
+       
     }
 }

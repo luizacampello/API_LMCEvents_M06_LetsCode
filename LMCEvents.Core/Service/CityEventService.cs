@@ -8,16 +8,13 @@ namespace LMCEvents.Core.Service
     {
         public ICityEventRepository _cityEventRepository;
         public IEventDTOMapper _eventDTOMapper;
+        public IEventReservationRepository _eventReservationRepository;
 
-        public CityEventService(ICityEventRepository cityEventRepository, IEventDTOMapper eventDTOMapper)
+        public CityEventService(ICityEventRepository cityEventRepository,IEventReservationRepository eventReservationRepository, IEventDTOMapper eventDTOMapper)
         {
             _cityEventRepository = cityEventRepository;
+            _eventReservationRepository = eventReservationRepository;
             _eventDTOMapper = eventDTOMapper;
-        }
-
-        public bool DeleteEvent(EventResponseDTO eventResponseDTO)
-        {
-            throw new NotImplementedException();
         }
 
         public List<EventResponseDTO> GetCityEvents()
@@ -27,7 +24,7 @@ namespace LMCEvents.Core.Service
 
         public EventResponseDTO GetEventById(long idEvent)
         {
-            throw new NotImplementedException();
+            return _eventDTOMapper.MapCityEventToResponseDTO(_cityEventRepository.GetEventById(idEvent));
         }
 
         public List<EventResponseDTO> GetEventByLocalAndDate(string local, DateTime date)
@@ -55,6 +52,16 @@ namespace LMCEvents.Core.Service
             CityEvent eventToUpdate = _eventDTOMapper.MapResponseDTOToCityEvent(eventResponseDTO);
             eventToUpdate.IdEvent = idEvent;
             return _cityEventRepository.UpdateEvent(eventToUpdate);
+        }
+
+        public bool DeleteEvent(long idEvent)
+        {
+            if (_eventReservationRepository.GetBookingByIdEvent(idEvent) is null)
+            {
+                return _cityEventRepository.DeleteEvent(idEvent);
+            }
+
+            return _cityEventRepository.UpdateEventStatus(idEvent);
         }
     }
 }

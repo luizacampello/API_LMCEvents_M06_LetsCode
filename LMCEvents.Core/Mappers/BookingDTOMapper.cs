@@ -6,19 +6,28 @@ namespace LMCEvents.Mappers
 {
     public class BookingDTOMapper : IBookingDTOMapper
     {
+        private readonly ICityEventRepository _cityEventRepository;
+
+        public BookingDTOMapper(ICityEventRepository cityEventRepository)
+        {
+            _cityEventRepository = cityEventRepository;
+        }
+
         public List<BookingResponseDTO> MapBookingsList(List<EventReservation> eventReservations)
         {
             List<BookingResponseDTO> map = new();
 
             foreach (EventReservation eventReservation in eventReservations)
             {
-                map.Add(MapEventReservationToResponseDTO(eventReservation));
+                CityEvent currentEvent = _cityEventRepository.GetEventById(eventReservation.IdEvent);
+
+                map.Add(MapEventReservationToResponseDTO(eventReservation, currentEvent));
             }
 
             return map;
         }
 
-        public BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation)
+        public BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation, CityEvent cityEvent)
         {
             if (eventReservation is null)
             {
@@ -32,6 +41,9 @@ namespace LMCEvents.Mappers
                 IdEvent = eventReservation.IdEvent,
             };
 
+            response.SetBookingPrice(cityEvent.Price);
+            response.SetTitle(cityEvent.Title);
+
             return response;
         }
 
@@ -41,7 +53,7 @@ namespace LMCEvents.Mappers
             {
                 PersonName = bookingResponseDTO.PersonName,
                 Quantity = bookingResponseDTO.Quantity,
-                IdEvent = bookingResponseDTO.IdEvent
+                IdEvent = bookingResponseDTO.GetIdEvent(),
             };
 
             return eventReservation;

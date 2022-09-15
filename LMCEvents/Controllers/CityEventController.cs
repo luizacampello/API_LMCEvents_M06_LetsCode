@@ -1,5 +1,7 @@
 ﻿using LMCEvents.Core.Interfaces;
+using LMCEvents.Core.Service;
 using LMCEvents.DTOs;
+using LMCEvents.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -84,13 +86,31 @@ namespace LMCEvents.Controllers
         [HttpPut("/updateEvent/{idEvent}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<EventResponseDTO> PutEvent(EventResponseDTO eventResponse, long idEvent)
+
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ServiceFilter(typeof(ValidateEventIdActionFilter))]
+        public ActionResult<EventResponseDTO> UpdateEvent(EventResponseDTO eventResponse, long idEvent)
         {
             if (!_cityEventService.UpdateEvent(idEvent, eventResponse))
             {
-                return BadRequest();
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
+            return NoContent();
+        }
+
+        [HttpDelete("/deleteEvent/{idEvent}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ServiceFilter(typeof(ValidateEventIdActionFilter))]
+        public IActionResult DeleteEvent(long idEvent)
+        {
+            if (!_cityEventService.DeleteEvent(idEvent))
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
             return NoContent();
         }
 

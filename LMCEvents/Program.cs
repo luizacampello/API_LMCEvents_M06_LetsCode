@@ -21,6 +21,7 @@ builder.Services.AddScoped<IEventReservationService, EventReservationService>();
 builder.Services.AddScoped<IEventReservationRepository, EventReservationRepository>();
 
 builder.Services.AddScoped<ValidateBookingIdActionFilter>();
+builder.Services.AddScoped<ValidateEventIdActionFilter>();
 
 //builder.Services.AddMvc(options =>
 //{

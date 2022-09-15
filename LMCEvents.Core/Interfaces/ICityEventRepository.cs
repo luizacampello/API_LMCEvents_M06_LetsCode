@@ -19,7 +19,9 @@ namespace LMCEvents.Core.Interfaces
 
         bool UpdateEvent(CityEvent cityEvent);
 
-        bool DeleteEvent(CityEvent cityEvent);
+        bool DeleteEvent(long idEvent);
+
+        bool UpdateEventStatus(long idEvent);
 
     }
 }

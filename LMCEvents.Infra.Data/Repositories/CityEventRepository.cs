@@ -130,9 +130,30 @@ namespace LMCEvents.Infra.Data.Repositories
             return conn.Execute(query, parameters) == 1;
         }
 
-        public bool DeleteEvent(CityEvent cityEvent)
+        public bool DeleteEvent(long idEvent)
         {
-            throw new NotImplementedException();
+            string query = "DELETE FROM CityEvent WHERE idEvent = @idEvent;";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("idEvent", idEvent);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.Execute(query, parameters) == 1;
+        }
+
+        public bool UpdateEventStatus(long idEvent)
+        {
+            int newStatus = 0;
+            string query = "UPDATE CityEvent SET status = @status WHERE idEvent = @idEvent;";            
+
+            var parameters = new DynamicParameters();
+            parameters.Add("idEvent", idEvent);
+            parameters.Add("status", newStatus);
+
+            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            return conn.Execute(query, parameters) == 1;
         }
 
         public CityEvent GetEventById(long idEvent)

@@ -8,16 +8,13 @@ namespace LMCEvents.Core.Service
     {
         public IEventReservationRepository _eventReservationRepository;
         public IBookingDTOMapper _bookingDTOMapper;
+        public ICityEventRepository _cityEventRepository;
 
-        public EventReservationService(IEventReservationRepository eventReservationRepository, IBookingDTOMapper bookingDTOMapper)
+        public EventReservationService(IEventReservationRepository eventReservationRepository, ICityEventRepository cityEventRepository, IBookingDTOMapper bookingDTOMapper)
         {
             _eventReservationRepository = eventReservationRepository;
+            _cityEventRepository = cityEventRepository;
             _bookingDTOMapper = bookingDTOMapper;
-        }
-
-        public List<BookingResponseDTO> GetBookingByPersonNameAndEventTitle(string personName, string eventTitle)
-        {
-            return _bookingDTOMapper.MapBookingsList(_eventReservationRepository.GetBookingByPersonNameAndEventTitle(personName, eventTitle));
         }
 
         public List<BookingResponseDTO> GetBookings()
@@ -25,24 +22,37 @@ namespace LMCEvents.Core.Service
             return _bookingDTOMapper.MapBookingsList(_eventReservationRepository.GetBookings());
         }
 
+        public List<BookingResponseDTO> GetBookingByPersonNameAndEventTitle(string personName, string eventTitle)
+        {
+            return _bookingDTOMapper.MapBookingsList(_eventReservationRepository.GetBookingsByPersonNameAndEventTitle(personName, eventTitle));
+        }             
+
         public bool InsertBooking(BookingResponseDTO booking)
         {           
             return _eventReservationRepository.InsertBooking(_bookingDTOMapper.MapResponseDTOToEventReservation(booking));
         }
 
-        public bool UpdateBooking(long idEvent, BookingResponseDTO booking)
+        public bool UpdateBooking(long idReservation, int newQuantity)
         {
-            return _eventReservationRepository.UpdateBooking(idEvent, _bookingDTOMapper.MapResponseDTOToEventReservation(booking));
+            return _eventReservationRepository.UpdateBooking(idReservation, newQuantity);
         }
 
-        public bool DeleteBooking(long idEvent)
+        public bool DeleteBooking(long idReservation)
         {
-            return _eventReservationRepository.DeleteBooking(idEvent);
+            return _eventReservationRepository.DeleteBooking(idReservation);
         }
 
         public BookingResponseDTO GetBookingById(long idBooking)
         {
-            return _bookingDTOMapper.MapEventReservationToResponseDTO(_eventReservationRepository.GetBookingById(idBooking));
+            EventReservation reservation = _eventReservationRepository.GetBookingById(idBooking);
+            if (reservation is null)
+            {
+                return null;
+            }
+
+            CityEvent getEvent = _cityEventRepository.GetEventById(reservation.IdEvent);
+
+            return _bookingDTOMapper.MapEventReservationToResponseDTO(reservation, getEvent);
         }
     }
 }

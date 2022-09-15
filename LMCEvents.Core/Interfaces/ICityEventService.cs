@@ -18,7 +18,7 @@ namespace LMCEvents.Core.Interfaces
 
         bool UpdateEvent(long idEvent, EventResponseDTO eventResponseDTO);
 
-        bool DeleteEvent(EventResponseDTO eventResponseDTO);
+        bool DeleteEvent(long idEvent);
 
     }
 }

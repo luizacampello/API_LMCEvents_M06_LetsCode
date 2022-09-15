@@ -37,7 +37,7 @@ namespace LMCEvents.Controllers
         [HttpPost("/newBooking")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<EventResponseDTO> PostNewBooking(BookingResponseDTO booking)
+        public ActionResult<BookingResponseDTO> PostNewBooking(BookingResponseDTO booking)
         {
             if (!_eventReservationService.InsertBooking(booking))
             {
@@ -47,14 +47,14 @@ namespace LMCEvents.Controllers
             return CreatedAtAction(nameof(PostNewBooking), booking);
         }
 
-        [HttpPut("/updateBooking/{idBooking}")]
+        [HttpPut("/updateBooking/{idBooking}/{newQuantity}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ServiceFilter(typeof(ValidateBookingIdActionFilter))]
-        public IActionResult UpdateBooking(long idBooking, BookingResponseDTO booking)
+        public IActionResult UpdateBooking(long idBooking, int newQuantity)
         {
-            if (!_eventReservationService.UpdateBooking(idBooking, booking))
+            if (!_eventReservationService.UpdateBooking(idBooking, newQuantity))
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }

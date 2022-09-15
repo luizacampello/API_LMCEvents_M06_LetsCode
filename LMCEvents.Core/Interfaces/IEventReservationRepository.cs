@@ -8,13 +8,15 @@ namespace LMCEvents.Core.Interfaces
 
         EventReservation GetBookingById(long idBooking);
 
-        List<EventReservation> GetBookingByPersonNameAndEventTitle(string personName, string eventTitle);
+        EventReservation GetBookingByIdEvent(long idEvent);
+
+        List<EventReservation> GetBookingsByPersonNameAndEventTitle(string personName, string eventTitle);
 
         bool InsertBooking(EventReservation booking);
 
-        bool UpdateBooking(long idBooking, EventReservation booking);
+        bool UpdateBooking(long idBooking, int newQuantity);
 
-        bool DeleteBooking(long idBooking);
+        bool DeleteBooking(long idBooking);        
 
     }
 }
