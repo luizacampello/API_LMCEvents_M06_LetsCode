@@ -1,15 +1,16 @@
 ﻿using LMCEvents.Core.Interfaces;
-using LMCEvents.Core.Model;
-using LMCEvents.Core.Service;
 using LMCEvents.DTOs;
 using LMCEvents.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 namespace LMCEvents.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Authorize]
     public class EventReservationController : ControllerBase
     {
         public IEventReservationService _eventReservationService;
@@ -19,9 +20,9 @@ namespace LMCEvents.Controllers
             _eventReservationService = eventReservationService;
         }
 
-
         [HttpGet("/bookings")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Roles = "admin, cliente")]
         public ActionResult<List<BookingResponseDTO>> GetBookings()
         {
             return Ok(_eventReservationService.GetBookings());
@@ -29,6 +30,7 @@ namespace LMCEvents.Controllers
 
         [HttpGet("/bookingByPersonNameAndEventTitle/{eventTitle}/{personName}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize(Roles = "admin, cliente")]
         public ActionResult<List<BookingResponseDTO>> GetBookingByPersonNameAndEventTitle(string eventTitle, string personName)
         {
             return Ok(_eventReservationService.GetBookingByPersonNameAndEventTitle(personName, eventTitle));
@@ -37,6 +39,7 @@ namespace LMCEvents.Controllers
         [HttpPost("/newBooking")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin, cliente")]
         public ActionResult<BookingResponseDTO> PostNewBooking(BookingResponseDTO booking)
         {
             if (!_eventReservationService.InsertBooking(booking))
@@ -52,6 +55,7 @@ namespace LMCEvents.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ServiceFilter(typeof(ValidateBookingIdActionFilter))]
+        [Authorize(Roles = "admin")]
         public IActionResult UpdateBooking(long idBooking, int newQuantity)
         {
             if (!_eventReservationService.UpdateBooking(idBooking, newQuantity))
@@ -67,6 +71,7 @@ namespace LMCEvents.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ServiceFilter(typeof(ValidateBookingIdActionFilter))]
+        [Authorize(Roles = "admin")]
         public IActionResult DeleteBooking(long idBooking)
         {
             if (!_eventReservationService.DeleteBooking(idBooking))

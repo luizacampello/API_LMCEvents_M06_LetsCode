@@ -51,6 +51,7 @@ namespace LMCEvents.Core.Service
         {
             CityEvent eventToUpdate = _eventDTOMapper.MapResponseDTOToCityEvent(eventResponseDTO);
             eventToUpdate.IdEvent = idEvent;
+
             return _cityEventRepository.UpdateEvent(eventToUpdate);
         }
 

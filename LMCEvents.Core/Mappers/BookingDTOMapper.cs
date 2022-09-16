@@ -6,26 +6,6 @@ namespace LMCEvents.Mappers
 {
     public class BookingDTOMapper : IBookingDTOMapper
     {
-        private readonly ICityEventRepository _cityEventRepository;
-
-        public BookingDTOMapper(ICityEventRepository cityEventRepository)
-        {
-            _cityEventRepository = cityEventRepository;
-        }
-
-        public List<BookingResponseDTO> MapBookingsList(List<EventReservation> eventReservations)
-        {
-            List<BookingResponseDTO> map = new();
-
-            foreach (EventReservation eventReservation in eventReservations)
-            {
-                CityEvent currentEvent = _cityEventRepository.GetEventById(eventReservation.IdEvent);
-
-                map.Add(MapEventReservationToResponseDTO(eventReservation, currentEvent));
-            }
-
-            return map;
-        }
 
         public BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation, CityEvent cityEvent)
         {

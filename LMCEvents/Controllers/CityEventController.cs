@@ -2,6 +2,7 @@
 using LMCEvents.Core.Service;
 using LMCEvents.DTOs;
 using LMCEvents.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -9,6 +10,9 @@ namespace LMCEvents.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [Authorize]
     public class CityEventController : ControllerBase
     {
         public ICityEventService _cityEventService;
@@ -43,6 +47,7 @@ namespace LMCEvents.Controllers
         [HttpGet("/eventByLocalAndDate/{local}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "admin, cliente")]
         public ActionResult<List<EventResponseDTO>> GetEventByLocalAndDate(string local, DateTime date)
         {
             List<EventResponseDTO> eventResponse = _cityEventService.GetEventByLocalAndDate(local, date);
@@ -73,6 +78,7 @@ namespace LMCEvents.Controllers
         [HttpPost("/newEvent")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "admin")]
         public ActionResult<EventResponseDTO> PostNewEvent(EventResponseDTO eventResponse)
         {
             if (!_cityEventService.InsertEvent(eventResponse))
@@ -86,9 +92,9 @@ namespace LMCEvents.Controllers
         [HttpPut("/updateEvent/{idEvent}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ServiceFilter(typeof(ValidateEventIdActionFilter))]
+        [Authorize(Roles = "admin")]
         public ActionResult<EventResponseDTO> UpdateEvent(EventResponseDTO eventResponse, long idEvent)
         {
             if (!_cityEventService.UpdateEvent(idEvent, eventResponse))
@@ -105,6 +111,7 @@ namespace LMCEvents.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ServiceFilter(typeof(ValidateEventIdActionFilter))]
+        [Authorize(Roles = "admin")]
         public IActionResult DeleteEvent(long idEvent)
         {
             if (!_cityEventService.DeleteEvent(idEvent))
