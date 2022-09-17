@@ -4,7 +4,7 @@ namespace LMCEvents.Core.Interfaces
 {
     public interface ICityEventService
     {
-        List<EventResponseDTO> GetCityEvents();
+        List<EventResponseDTO> GetCityEventsByLocal(string local);
 
         EventResponseDTO GetEventById(long idEvent);
 

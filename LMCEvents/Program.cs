@@ -25,8 +25,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = true, 
             ValidateAudience = true, 
-            ValidIssuer = "APIClientes.com",
-            ValidAudience = "APIEvents.com"
+            ValidIssuer = builder.Configuration["Issuer"],
+            ValidAudience = builder.Configuration["Audience"]
         };
     });
 
@@ -78,7 +78,6 @@ builder.Services.AddScoped<IEventReservationRepository, EventReservationReposito
 
 builder.Services.AddScoped<ValidateBookingIdActionFilter>();
 builder.Services.AddScoped<ValidateEventIdActionFilter>();
-
 
 var app = builder.Build();
 

@@ -16,66 +16,67 @@ namespace LMCEvents.Infra.Data.Repositories
             _configuration = configuration;
         }
 
-        public List<CityEvent> GetCityEvents()
+        public List<CityEvent> GetCityEventsByLocal(string local)
         {
-            string query = "SELECT * FROM CityEvent";
+            string query = "SELECT * FROM CityEvent WHERE local LIKE CONCAT('%',@local,'%')";
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            var parameters = new DynamicParameters();
+            parameters.Add("local", local);
 
-            return conn.Query<CityEvent>(query).ToList();
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+                return conn.Query<CityEvent>(query, parameters).ToList();
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
+
         }
 
         public List<CityEvent> GetEventByLocalAndDate(string local, DateTime date)
         {
-            string queryNoDate = "SELECT * FROM CityEvent WHERE local = @local AND status = 1";
-
-            string queryWithDate = "SELECT * FROM CityEvent WHERE local = @local AND CAST(dateHourEvent AS DATE) = CAST(@date AS DATE) AND status = 1";
-
-            string query;
-
-            if (date == default)
-            {
-                query = queryNoDate;
-            }
-            else
-            {
-                query = queryWithDate;
-            }
-
+            string query = "SELECT * FROM CityEvent WHERE local = @local AND CAST(dateHourEvent AS DATE) = CAST(@date AS DATE) AND status = 1";
+                        
             var parameters = new DynamicParameters();
             parameters.Add("local", local);
             parameters.Add("date", date.ToString("yyyy-MM-ddTHH:mm:ss.fff"));
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<CityEvent>(query, parameters).ToList();
+                return conn.Query<CityEvent>(query, parameters).ToList();
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
+
         }
 
         public List<CityEvent> GetEventByPriceAndDate(decimal priceMin, decimal priceMax, DateTime date)
         {          
-            string queryNoDate = "SELECT * FROM CityEvent WHERE price BETWEEN @priceMin AND @priceMax AND status = 1";
-
-            string queryWithDate = "SELECT * FROM CityEvent WHERE price BETWEEN @priceMin AND @priceMax AND CAST(dateHourEvent AS DATE) = CAST(@date AS DATE) AND status = 1";
-
-            string query;
-
-            if (date == default)
-            {
-                query = queryNoDate;
-            }
-            else
-            {
-                query = queryWithDate;
-            }
-
+            
+            string query = "SELECT * FROM CityEvent WHERE price BETWEEN @priceMin AND @priceMax AND CAST(dateHourEvent AS DATE) = CAST(@date AS DATE) AND status = 1";
+                       
             var parameters = new DynamicParameters();
             parameters.Add("priceMin", priceMin);
             parameters.Add("priceMax", priceMax);
             parameters.Add("date", date.ToString("yyyy-MM-ddTHH:mm:ss.fff"));
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<CityEvent>(query, parameters).ToList();
+                return conn.Query<CityEvent>(query, parameters).ToList();
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
         }
 
         public List<CityEvent> GetEventByTitle(string title)
@@ -85,9 +86,16 @@ namespace LMCEvents.Infra.Data.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("title", title);
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Query<CityEvent>(query, parameters).ToList();
+                return conn.Query<CityEvent>(query, parameters).ToList();
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
         }
 
         public bool InsertEvent(CityEvent newEvent)
@@ -104,9 +112,16 @@ namespace LMCEvents.Infra.Data.Repositories
                 newEvent.Price
             });
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Execute(query, parameters) == 1;
+                return conn.Execute(query, parameters) == 1;
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
         }
 
         public bool UpdateEvent(CityEvent eventToUpdate)
@@ -125,9 +140,16 @@ namespace LMCEvents.Infra.Data.Repositories
 
             });
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Execute(query, parameters) == 1;
+                return conn.Execute(query, parameters) == 1;
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
         }
 
         public bool DeleteEvent(long idEvent)
@@ -137,9 +159,16 @@ namespace LMCEvents.Infra.Data.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("idEvent", idEvent);
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Execute(query, parameters) == 1;
+                return conn.Execute(query, parameters) == 1;
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
         }
 
         public bool UpdateEventStatus(long idEvent)
@@ -151,9 +180,16 @@ namespace LMCEvents.Infra.Data.Repositories
             parameters.Add("idEvent", idEvent);
             parameters.Add("status", newStatus);
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.Execute(query, parameters) == 1;
+                return conn.Execute(query, parameters) == 1;
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
         }
 
         public CityEvent GetEventById(long idEvent)
@@ -163,9 +199,16 @@ namespace LMCEvents.Infra.Data.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("idEvent", idEvent);
 
-            using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-            return conn.QueryFirstOrDefault<CityEvent>(query, parameters);
+                return conn.QueryFirstOrDefault<CityEvent>(query, parameters);
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is SqlException)
+            {
+                throw;
+            }
         }
     }
 }

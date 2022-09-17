@@ -17,9 +17,9 @@ namespace LMCEvents.Core.Service
             _eventDTOMapper = eventDTOMapper;
         }
 
-        public List<EventResponseDTO> GetCityEvents()
+        public List<EventResponseDTO> GetCityEventsByLocal(string local)
         {
-            return _eventDTOMapper.MapCityEventsList(_cityEventRepository.GetCityEvents());
+            return _eventDTOMapper.MapCityEventsList(_cityEventRepository.GetCityEventsByLocal(local));
         }
 
         public EventResponseDTO GetEventById(long idEvent)

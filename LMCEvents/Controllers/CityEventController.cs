@@ -1,10 +1,8 @@
 ﻿using LMCEvents.Core.Interfaces;
-using LMCEvents.Core.Service;
 using LMCEvents.DTOs;
 using LMCEvents.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace LMCEvents.Controllers
 {
@@ -13,6 +11,9 @@ namespace LMCEvents.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status417ExpectationFailed)]
     public class CityEventController : ControllerBase
     {
         public ICityEventService _cityEventService;
@@ -22,16 +23,26 @@ namespace LMCEvents.Controllers
             _cityEventService = cityEventService;
         }
 
-        [HttpGet("/events")]
+        [HttpGet("/events/{local}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<List<EventResponseDTO>> GetEvents()
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
+        public ActionResult<List<EventResponseDTO>> GetEventsByLocal(string local)
         {
-            return Ok(_cityEventService.GetCityEvents());
+            List<EventResponseDTO> eventResponse = _cityEventService.GetCityEventsByLocal(local);
+
+            if (eventResponse.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(eventResponse);
         }
 
         [HttpGet("/eventByTitle/{title}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         public ActionResult<List<EventResponseDTO>> GetEventByTitle(string title)
         {
             List <EventResponseDTO> eventResponse = _cityEventService.GetEventByTitle(title);
@@ -44,10 +55,10 @@ namespace LMCEvents.Controllers
             return Ok(eventResponse);
         }
 
-        [HttpGet("/eventByLocalAndDate/{local}")]
+        [HttpGet("/eventByLocalAndDate/{local}/{date}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Authorize(Roles = "admin, cliente")]
+        [AllowAnonymous]
         public ActionResult<List<EventResponseDTO>> GetEventByLocalAndDate(string local, DateTime date)
         {
             List<EventResponseDTO> eventResponse = _cityEventService.GetEventByLocalAndDate(local, date);
@@ -60,9 +71,10 @@ namespace LMCEvents.Controllers
             return Ok(eventResponse);
         }
 
-        [HttpGet("/eventByPriceAndDate/{priceMin}/{priceMax}")]
+        [HttpGet("/eventByPriceAndDate/{priceMin}/{priceMax}/{date}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [AllowAnonymous]
         public ActionResult<List<EventResponseDTO>> GetEventByPriceAndDate(decimal priceMin, decimal priceMax, DateTime date)
         {
             List<EventResponseDTO> eventResponse = _cityEventService.GetEventByPriceAndDate(priceMin, priceMax, date);
@@ -78,6 +90,8 @@ namespace LMCEvents.Controllers
         [HttpPost("/newEvent")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Roles = "admin")]
         public ActionResult<EventResponseDTO> PostNewEvent(EventResponseDTO eventResponse)
         {
@@ -92,7 +106,9 @@ namespace LMCEvents.Controllers
         [HttpPut("/updateEvent/{idEvent}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ServiceFilter(typeof(ValidateEventIdActionFilter))]
         [Authorize(Roles = "admin")]
         public ActionResult<EventResponseDTO> UpdateEvent(EventResponseDTO eventResponse, long idEvent)
@@ -109,7 +125,8 @@ namespace LMCEvents.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ServiceFilter(typeof(ValidateEventIdActionFilter))]
         [Authorize(Roles = "admin")]
         public IActionResult DeleteEvent(long idEvent)

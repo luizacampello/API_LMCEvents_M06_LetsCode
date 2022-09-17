@@ -25,14 +25,21 @@ namespace LMCEvents.Core.Service
         public List<BookingResponseDTO> GetBookingByPersonNameAndEventTitle(string personName, string eventTitle)
         {
             return MapBookingsList(_eventReservationRepository.GetBookingsByPersonNameAndEventTitle(personName, eventTitle));
-        }             
-
-        public bool InsertBooking(BookingResponseDTO booking)
-        {           
-            return _eventReservationRepository.InsertBooking(_bookingDTOMapper.MapResponseDTOToEventReservation(booking));
         }
 
-        public bool UpdateBooking(long idReservation, int newQuantity)
+        public bool InsertBooking(BookingResponseDTO booking)
+        {
+            CityEvent bookedEvent = _cityEventRepository.GetEventById(booking.GetIdEvent());
+
+            if (bookedEvent is not null && bookedEvent.Status)
+            {
+                return _eventReservationRepository.InsertBooking(_bookingDTOMapper.MapResponseDTOToEventReservation(booking));
+            }
+
+            return false;
+        }
+
+        public bool UpdateBooking(long idReservation, long newQuantity)
         {
             return _eventReservationRepository.UpdateBooking(idReservation, newQuantity);
         }
@@ -45,14 +52,8 @@ namespace LMCEvents.Core.Service
         public BookingResponseDTO GetBookingById(long idBooking)
         {
             EventReservation reservation = _eventReservationRepository.GetBookingById(idBooking);
-            if (reservation is null)
-            {
-                return null;
-            }
 
-            CityEvent getEvent = _cityEventRepository.GetEventById(reservation.IdEvent);
-
-            return _bookingDTOMapper.MapEventReservationToResponseDTO(reservation, getEvent);
+            return _bookingDTOMapper.MapEventReservationToResponseDTO(reservation);
         }
 
         private List<BookingResponseDTO> MapBookingsList(List<EventReservation> eventReservations)

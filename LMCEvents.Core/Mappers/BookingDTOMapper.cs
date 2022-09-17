@@ -6,6 +6,22 @@ namespace LMCEvents.Mappers
 {
     public class BookingDTOMapper : IBookingDTOMapper
     {
+        public BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation)
+        {
+            if (eventReservation is null)
+            {
+                return null;
+            }
+
+            BookingResponseDTO response = new()
+            {
+                PersonName = eventReservation.PersonName,
+                Quantity = eventReservation.Quantity,
+                IdEvent = eventReservation.IdEvent,
+            };
+
+            return response;
+        }
 
         public BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation, CityEvent cityEvent)
         {
@@ -21,8 +37,8 @@ namespace LMCEvents.Mappers
                 IdEvent = eventReservation.IdEvent,
             };
 
-            response.SetBookingPrice(cityEvent.Price);
-            response.SetTitle(cityEvent.Title);
+            response.SetEventInfo($"{cityEvent.Title} - {cityEvent.Local}");
+            response.SetBookingPrice(cityEvent.Price);            
 
             return response;
         }

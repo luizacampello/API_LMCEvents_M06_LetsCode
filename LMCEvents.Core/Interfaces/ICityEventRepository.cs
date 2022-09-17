@@ -5,7 +5,7 @@ namespace LMCEvents.Core.Interfaces
 {
     public interface ICityEventRepository
     {
-        List<CityEvent> GetCityEvents();
+        List<CityEvent> GetCityEventsByLocal(string local);
 
         CityEvent GetEventById(long idEvent);
 

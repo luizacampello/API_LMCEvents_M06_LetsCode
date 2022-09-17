@@ -9,6 +9,11 @@ namespace LMCEvents.Core.Service
 {
     public class TokenService : ITokenService
     {
+        private const string SECRET_KEY = "secretKey";
+        private const string ISSUER = "Issuer";
+        private const string AUDIENCE = "Audience";
+
+
         private readonly IConfiguration _configuration;
 
         public TokenService(IConfiguration configuration)
@@ -18,12 +23,12 @@ namespace LMCEvents.Core.Service
 
         public string GenerateTokenEvents(string name, string permission)
         {
-            var Key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("secretKey"));
+            var Key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>(SECRET_KEY));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Issuer = "APIClientes.com",
-                Audience = "APIEvents.com",
+                Issuer = _configuration.GetValue<string>(ISSUER),
+                Audience = _configuration.GetValue<string>(AUDIENCE),
                 Expires = DateTime.UtcNow.AddHours(2),
                 Subject = new ClaimsIdentity(new Claim[]
                 {

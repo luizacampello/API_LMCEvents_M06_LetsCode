@@ -13,7 +13,7 @@ namespace LMCEvents.Core.Interfaces
 
         bool InsertBooking(BookingResponseDTO booking);
 
-        bool UpdateBooking(long idEvent, int quantity);
+        bool UpdateBooking(long idEvent, long quantity);
 
         bool DeleteBooking(long idEvent);
     }

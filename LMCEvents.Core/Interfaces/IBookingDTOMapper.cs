@@ -5,6 +5,8 @@ namespace LMCEvents.Core.Interfaces
 {
     public interface IBookingDTOMapper
     {
+        BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation);
+
         BookingResponseDTO MapEventReservationToResponseDTO(EventReservation eventReservation, CityEvent cityEvent);
 
         EventReservation MapResponseDTOToEventReservation(BookingResponseDTO booking);

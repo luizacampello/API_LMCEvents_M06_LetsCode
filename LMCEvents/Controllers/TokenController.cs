@@ -17,6 +17,7 @@ namespace LMCEvents.Controllers
         }
 
         [HttpGet]
+        [Produces("text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<string> CreateToken(string name, string permission)
         {

@@ -1,4 +1,5 @@
 ﻿using LMCEvents.Core.Interfaces;
+using LMCEvents.Core.Service;
 using LMCEvents.DTOs;
 using LMCEvents.Filters;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,11 @@ namespace LMCEvents.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status417ExpectationFailed)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public class EventReservationController : ControllerBase
     {
         public IEventReservationService _eventReservationService;
@@ -22,18 +28,35 @@ namespace LMCEvents.Controllers
 
         [HttpGet("/bookings")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [Authorize(Roles = "admin, cliente")]
         public ActionResult<List<BookingResponseDTO>> GetBookings()
         {
-            return Ok(_eventReservationService.GetBookings());
+            List<BookingResponseDTO> bookingResponse = _eventReservationService.GetBookings();
+
+            if (bookingResponse.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Ok(bookingResponse);
         }
 
         [HttpGet("/bookingByPersonNameAndEventTitle/{eventTitle}/{personName}")]
+
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Roles = "admin, cliente")]
         public ActionResult<List<BookingResponseDTO>> GetBookingByPersonNameAndEventTitle(string eventTitle, string personName)
         {
-            return Ok(_eventReservationService.GetBookingByPersonNameAndEventTitle(personName, eventTitle));
+            List<BookingResponseDTO> bookingResponse = _eventReservationService.GetBookingByPersonNameAndEventTitle(personName, eventTitle);
+
+            if (bookingResponse.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(bookingResponse);
         }
 
         [HttpPost("/newBooking")]
@@ -69,7 +92,6 @@ namespace LMCEvents.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ServiceFilter(typeof(ValidateBookingIdActionFilter))]
         [Authorize(Roles = "admin")]
         public IActionResult DeleteBooking(long idBooking)

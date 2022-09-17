@@ -14,7 +14,7 @@ namespace LMCEvents.Core.Interfaces
 
         bool InsertBooking(EventReservation booking);
 
-        bool UpdateBooking(long idBooking, int newQuantity);
+        bool UpdateBooking(long idBooking, long newQuantity);
 
         bool DeleteBooking(long idBooking);        
 
