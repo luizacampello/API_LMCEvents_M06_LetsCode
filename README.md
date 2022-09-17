@@ -47,4 +47,4 @@ Issuer = "APIClientes.com"
 key = "he0ErCNloe4J7Id0Ry2SEDg09lKkZkfsRiGsdX_vgEg" 
 ```
 
-#### Atenção - As configurações para conexão com o banco não estão incluídas no repositório e devem ser especificadas no arquivo *appsettings.json*, na seção de *ConnectionStrings* .
+#### Atenção - As configurações para conexão com o banco não estão incluídas no repositório e devem ser especificadas no arquivo *appsettings.json*, na seção de *ConnectionStrings* . Os Parametros de Audience, Issuer e Key também devem ser inseridas neste arquivo com os nomes: Audience, Issuer e SecretKey, respectivamente.
