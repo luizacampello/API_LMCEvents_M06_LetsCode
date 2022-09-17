@@ -74,6 +74,7 @@ namespace LMCEvents.Controllers
         [HttpGet("/eventByPriceAndDate/{priceMin}/{priceMax}/{date}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ServiceFilter(typeof(ValidatePriceRangeActionFilter))]
         [AllowAnonymous]
         public ActionResult<List<EventResponseDTO>> GetEventByPriceAndDate(decimal priceMin, decimal priceMax, DateTime date)
         {

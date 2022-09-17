@@ -78,6 +78,7 @@ builder.Services.AddScoped<IEventReservationRepository, EventReservationReposito
 
 builder.Services.AddScoped<ValidateBookingIdActionFilter>();
 builder.Services.AddScoped<ValidateEventIdActionFilter>();
+builder.Services.AddScoped<ValidatePriceRangeActionFilter>();
 
 var app = builder.Build();
 

@@ -18,7 +18,7 @@ namespace LMCEvents.Infra.Data.Repositories
 
         public List<CityEvent> GetCityEventsByLocal(string local)
         {
-            string query = "SELECT * FROM CityEvent WHERE local LIKE CONCAT('%',@local,'%')";
+            string query = "SELECT * FROM CityEvent WHERE local LIKE CONCAT('%',@local,'%') AND status = 1";
 
             var parameters = new DynamicParameters();
             parameters.Add("local", local);
@@ -81,7 +81,7 @@ namespace LMCEvents.Infra.Data.Repositories
 
         public List<CityEvent> GetEventByTitle(string title)
         {
-            string query = "SELECT * FROM CityEvent WHERE title LIKE CONCAT('%',@title,'%')";
+            string query = "SELECT * FROM CityEvent WHERE title LIKE CONCAT('%',@title,'%') AND status = 1";
 
             var parameters = new DynamicParameters();
             parameters.Add("title", title);
